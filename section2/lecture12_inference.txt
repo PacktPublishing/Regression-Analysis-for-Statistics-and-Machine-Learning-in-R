@@ -1,0 +1,30 @@
+################## interpret the results
+
+############## add regression line
+
+library(ggplot2)
+
+ggplot(Orange, aes(x=age, y=circumference)) + 
+  geom_point(color='#2980B9', size = 4) + 
+  geom_smooth(method=lm, color='#2C3E50')
+
+fit=lm(circumference~age,data=Orange)
+
+summary(fit)
+
+
+p=
+  ggplot(Orange, aes(x=age, y=circumference)) + 
+  geom_point(color='#2980B9', size = 4) + 
+  geom_smooth(method=lm, color='#2C3E50')
+
+p1 <- p + ggtitle("OLS regression line")
+p1
+
+head(Orange)
+
+#predict the circumfrence of a tree aged 1500
+age=1500
+
+circ=0.106*age
+circ

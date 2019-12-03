@@ -1,0 +1,35 @@
+######## Multinomial logistic regression
+######### more than two discrete response variable
+
+setwd("F:\\RegressionModelling_R\\Data\\section6")
+
+library(caret)
+
+glass=read.csv("glassClass.csv")
+head(glass)
+
+##Y var- Type that indicates the glass type (1-7)
+## numbers are categories. Set them as factor
+
+glass$Type= as.factor(glass$Type)
+table(glass$Type)
+
+set.seed(99)
+Train = createDataPartition(glass$Type, p=0.75, list=FALSE)
+#split data in 75%-25% ratio
+
+
+training = glass[ Train, ] #75% training
+testing = glass[ -Train, ]
+
+library(nnet)
+gModel = multinom(Type~., data=training, maxit=500, trace=T)
+
+varImp(gModel) #importance of the different predictors
+
+p1= predict(gModel,type="class", newdata=testing)
+
+p2= predict(gModel,type="probs", newdata=testing)
+
+## test accuracy
+postResample(testing$Type,p1)

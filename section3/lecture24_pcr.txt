@@ -1,0 +1,32 @@
+
+library(mlbench)
+library(help = "mlbench")
+
+data(BostonHousing)
+str(BostonHousing)
+
+summary(BostonHousing)
+head(BostonHousing)
+
+##Predict the variation in medv house price- median house price
+## medv, our target variable (Y) is a continuous numerical entity
+##Regression problem
+
+library(pls)
+set.seed (1000)
+
+### PCR Regression
+
+pcr_model <- pcr(medv~., data = BostonHousing, scale = TRUE, validation = "CV")
+
+summary(pcr_model)
+
+# Plot the root mean squared error
+validationplot(pcr_model) #decline in error in the predicted value of Y
+#as we add more principal components
+
+# Plot the R2
+validationplot(pcr_model, val.type = "R2") #variation Y explained as we
+#add the different principal components
+
+predplot(pcr_model) #predicted Y vs actual Y

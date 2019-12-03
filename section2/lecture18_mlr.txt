@@ -1,0 +1,21 @@
+######################################################################
+#####################################################################
+######### Multiple Linear regression
+######## Generalize Simple Linear Regression
+### Predict the variation in Y as a function of 2 or more Xs
+
+data(iris)
+head(iris)
+
+fit1=lm(Sepal.Length~Sepal.Width+Petal.Length,data=iris)
+summary(fit1)
+
+fit2=lm(Sepal.Length~Sepal.Width+Petal.Length+Petal.Width,data=iris)
+summary(fit2)
+
+##size of the coefficient for each independent variable gives 
+##the size of the effect that variable is having on 
+##dependent variable,
+
+## 1 unit increase in petal length leads to 0.7 increase in Y 
+## all other predictors are kept constant

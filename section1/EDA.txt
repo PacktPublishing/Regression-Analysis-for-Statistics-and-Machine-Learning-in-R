@@ -1,0 +1,38 @@
+data(iris)
+names(iris)
+
+##examine data distribution
+
+hist(iris$Sepal.Length) # distribution of a varaibles
+
+boxplot(iris$Sepal.Length,main="5 Stat Summary of iris",xlab="Sepal Length")
+
+#relation bw 2 variables
+plot(iris$Sepal.Length,iris$Sepal.Width)
+
+#PLOTTING CATEGORICAL VARIABLES
+
+counts <- table(iris$Species)
+counts
+barplot(counts, main="Iris Species", xlab="Samples/species")
+
+barplot(counts, main="Iris Species", xlab="Samples/species",horiz=TRUE)
+
+## Improved data viz
+
+library(ggplot2)
+
+# relation bw Sepal length and width of 3 different species
+qplot(Sepal.Length, Petal.Length, data = iris, color = Species)
+
+# We see that Iris setosa flowers have the narrowest petals.
+qplot(Sepal.Length, Petal.Length, data = iris, color = Species, size = Petal.Width)
+
+##Add labels to the plot
+
+qplot(Sepal.Length, Petal.Length, data = iris, color = Species,
+    xlab = "Sepal Length", ylab = "Petal Length",
+    main = "Sepal vs. Petal Length in Iris data")
+
+# Plot the number of movies each director has.
+  qplot(Species, data = iris, geom = "bar", ylab = "Samples/species)

@@ -1,0 +1,33 @@
+#############################################################
+################### PLS Regression##############################
+############ Partial least square (PLS) regression############
+
+library(caret)
+
+myfolds <- createMultiFolds(BostonHousing$medv, k = 5, times = 10)
+control <- trainControl("repeatedcv", index = myfolds, selectionFunction = "oneSE")
+
+# Train PLS model
+mod1 <- train(medv ~ ., data = BostonHousing,
+              method = "pls",
+              metric = "R2",
+              tuneLength = 20,
+              trControl = control,
+              preProc = c("zv","center","scale"))
+
+
+# Check CV profile
+plot(mod1) #how inclusion of designated latent variables decreses error 
+#in predicting y
+
+library(plsdepot)
+data(vehicles)
+head(vehicles)
+names(vehicles)
+
+cars = vehicles[ ,c(1:12,14:16,13)]
+
+pls1 = plsreg1(cars[, 1:15], cars[, 16, drop = FALSE], comps = 5)
+pls1
+
+pls1$R2 ##R2 for each of our components

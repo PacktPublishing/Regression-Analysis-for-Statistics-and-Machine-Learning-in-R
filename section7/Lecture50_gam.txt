@@ -1,0 +1,66 @@
+#####################################################################
+######## Generalized Additive Model (GAM)#######################
+
+##generalization to incorporate nonlinear forms of the predictors
+## relating our nonlinear predictors to the expected value, irrespective of link function may be appropriate
+##account for the non-linearity bw X and Y
+
+eco=read.csv("biocap.csv")
+head(eco)
+library(car)
+scatterplotMatrix(eco,
+                  diagonal="histogram",
+                  smooth=FALSE)
+
+head(eco)
+library(mgcv)
+library(gam)
+
+mod_lm = gam(BiocapacityT ~ Population+HDI+Grazing.Footprint+Carbon.Footprint+
+                Cropland+Forest.Land+Urban.Land+GDP, data=eco)
+
+summary(mod_lm)
+
+
+
+#fit an actual generalized additive model using 
+#the same cubic spline as our basis
+
+mod_lm2 <- gam(BiocapacityT ~ s(Grazing.Footprint)+s(Cropland)+s(Forest.Land), data=eco)
+#s is the smooth term
+# output is separated into parametric and smooth/nonparametric parts
+summary(mod_lm2)
+
+x=lm(BiocapacityT ~ Grazing.Footprint+Cropland+Forest.Land, data=eco)
+
+summary(x)
+
+anova(mod_lm2, x, test="Chisq")# incorporating nonlinear effects improves the model.
+
+#Concurvity refers to the generalization of collinearity to the GAM setting. 
+#In this case it refers to the situation where a smooth term can be 
+#approximated by some combination of the others. 
+# Can lead to unstable estimates
+concurvity(mod_lm2)
+
+mod_gam3 <- gam(BiocapacityT ~ te(Grazing.Footprint, Cropland,Forest.Land), data=eco)
+summary(mod_gam3)
+# instead of splines specify tensor product smooth
+
+vis.gam(mod_gam3, type='response', plot.type='persp',
+             phi=30, theta=30,n.grid=500, border=NA)
+
+#GF & croplandalone does not necessarily guarantee higher Biocapacity
+
+
+library(caret)
+
+b = train(BiocapacityT ~ ., 
+           data = eco,
+           method = "gam",
+           trControl = trainControl(method = "LOOCV", number = 1, repeats = 1),
+           tuneGrid = data.frame(method = "GCV.Cp", select = FALSE)
+)
+
+print(b)
+summary(b$finalModel)

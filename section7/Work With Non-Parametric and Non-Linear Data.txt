@@ -1,0 +1,4 @@
+Work With Non-Parametric and Non-Linear Data
+Non linearity between the predictor and response variables violates a fundamental condition of OLS regression. A variety of regression techniques, ranging from polynomial regression to generalized additive models (GAMs) maybe applied to formalize the relationship between X and Y in this case.
+
+Non-parametric regression models are those which do not depend on the underlying data distribution and are consequently data-distribution independent.  Machine learning regression models (such as tree based regression models) are usually data-distribution independent and can help build robust predictive models. 

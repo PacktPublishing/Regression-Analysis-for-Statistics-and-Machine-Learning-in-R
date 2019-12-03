@@ -1,0 +1,60 @@
+#####################################################################
+######### Logistic regression- binary response variable
+
+### (common machine learning algorithm- binary classification)
+setwd("F:\\RegressionModelling_R\\Data\\section6")
+
+library(caret)
+
+voice2=read.csv("voice.csv")
+head(voice2)
+
+summary(voice2)
+
+set.seed(99)
+Train = createDataPartition(voice2$label, p=0.75, list=FALSE)
+#split data in 75%-25% ratio
+
+# define training control
+train_control <- trainControl(method="cv", number=10)
+
+training = voice2[ Train, ] #75% training
+testing = voice2[ -Train, ]
+
+mod_fit=train(label~.,data=training,trControl=train_control,method="glm",family="binomial")
+
+#estimates from logistic regression characterize the relationship between the predictor and response variable 
+#on a log-odds scale
+
+summary(mod_fit)
+
+mod_fit2=train(label~Q25+Q75+sp.ent+sfm+meanfun+minfun+mode,data=training,method="glm",family="binomial")
+
+summary(mod_fit2)
+#unit increase in q25 reduces the log odds by 55
+
+#use the exponential function to calculate the odds ratios for each preditor
+exp(coef(mod_fit2$finalModel))
+
+#unit increase in mode= odds of being a male increase by 26
+
+p1=predict(mod_fit2, newdata=testing)
+p2=predict(mod_fit2, newdata=testing, type="prob")
+
+#test accuracy of the model
+accuracy <- table(p1, testing[,"label"])
+
+sum(diag(accuracy))/sum(accuracy)
+
+## importance of the different predictors
+varImp(mod_fit2)
+
+#no exact equivalent to the R2 of linear regression exists, 
+#the McFadden R2 index can be used to assess the model fit
+
+mod_fit2a=glm(label~Q25+Q75+sp.ent+sfm+meanfun+minfun+mode,data=training,family="binomial")
+library(pscl)
+pR2(mod_fit2a)
+
+#can only be applied to glm function
+#this model explains 87% variance in the response variable

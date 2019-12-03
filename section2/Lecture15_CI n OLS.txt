@@ -1,0 +1,39 @@
+##############################################################
+############ Confidence interval################
+
+#The confidence level describes the uncertainty associated with a sampling method. 
+# A 95% confidence level means that 95% of the intervals would include the parameter; and so on.
+
+#provide a measure of precision for linear regression coefficient 
+#estimates.
+
+library(ggplot2)
+
+fit=lm(circumference~age,data=Orange)
+
+summary(fit)
+
+ggplot(Orange, aes(x=age, y=circumference)) + 
+  geom_point(color='#2980B9', size = 4) + 
+  geom_smooth(method=lm, color='#2C3E50')
+
+#The gray ‘bands’ around the regression line in the plot 
+#represent the range in which the true regression line lies 
+#at a certain level of confidence (95% in the plot). 
+#The bands visualize all intervals for every possible x and are 
+#tightest where the data is grouped more densely.
+
+new.dat = data.frame(age=1500)
+predict(fit, newdata = new.dat, interval = 'confidence')
+
+# the fitted c at a 1500 age is just above 177 cm. 
+#The confidence interval of (164.85, 190.25) signifies the range in 
+#which the true population parameter lies at a 95% level of confidence.
+
+# Confidence Interval of the Slope Estimate
+
+confint(fit)
+
+#The fitted reg coeff of slope is 0.106 
+#with an interval of (0.09, 0.12)
+# if it does not contain 0 the regression coefficent is statistically significant

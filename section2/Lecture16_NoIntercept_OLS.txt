@@ -1,0 +1,23 @@
+#####################################################################
+#### Linear regression without the intercept########
+
+library(ggplot2)
+
+ggplot(Orange, aes(x=age, y=circumference)) + 
+  geom_point(color='#2980B9', size = 4) + 
+  geom_smooth(method=lm, color='#2C3E50')
+
+library(ggplot2)
+
+#OLS regression
+fit=lm(circumference~age,data=Orange)
+
+summary(fit)
+
+confint(fit) #CI of intercept conatains a 0
+
+##force intercept to be 0
+
+fit0=lm(circumference~age+0,data=Orange)
+
+summary(fit0)

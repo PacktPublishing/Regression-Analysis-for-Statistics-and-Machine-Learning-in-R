@@ -1,0 +1,9 @@
+
+############### inear regression & anova
+
+fit1 = lm(Sepal.Length~Petal.Length, data=iris)
+
+summary(fit1)
+
+anova(fit1)
+

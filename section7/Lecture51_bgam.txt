@@ -1,0 +1,52 @@
+#####################################################################
+######## Boosted Generalized Additive Model (BGAM)#######################
+
+## deals with the issue of Concurvity and collinearity
+## has a more machine learning centric approach- does not produce
+## coefficent estimates 
+
+library(caret)
+library(mboost)
+eco=read.csv("biocap.csv")
+head(eco)
+
+## gamboost fitting
+set.seed(123)
+
+Train = createDataPartition(eco$BiocapacityT , p=0.75, list=FALSE)
+#split data in 75%-25% ratio
+
+training = eco[ Train, ] #75% data for training 
+testing = eco[ -Train, ] #25% testing
+
+fitControl = trainControl(method = 'cv', number=10)
+
+Grid <- expand.grid(.mstop=seq(100,1000,100),.prune=c(5))
+
+formula = BiocapacityT ~ Population+HDI+Grazing.Footprint+Carbon.Footprint+
+  Cropland+Forest.Land+Urban.Land+GDP
+
+fit1 = train(formula, data=training, method = 'gamboost', trControl=fitControl,tuneGrid=Grid,metric='RMSE',maximize=FALSE)
+
+fit1 
+
+print(fit1)
+varImp(fit1,scale=TRUE)
+
+v=varImp(fit1,scale=TRUE)
+plot(v)
+
+p1=predict(fit1, newdata=testing) 
+
+p=as.data.frame(p1)
+test=as.data.frame(testing$BiocapacityT) #actual y values. excluded
+y=cbind(test,p)
+colnames(y)=c("BiocapacityT","Pred")
+
+head(y) #df of the actual y and predicted y
+
+cor.test(y$BiocapacityT,y$Pred) #strong association between the predicted and actual 
+#Biocapacity
+
+library(Metrics)
+rmse(y$BiocapacityT,y$Pred) #root mean square error

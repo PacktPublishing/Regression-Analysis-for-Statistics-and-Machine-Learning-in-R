@@ -1,0 +1,31 @@
+####################################################################
+#### Robust regression- Least trimmed squares regression.######
+
+#robust statistical method that fits a function to a set of data 
+# not unduly affected by the presence of outliers.
+
+#LTS method attempts to minimise the sum of squared residuals 
+#over a subset of k pts; n-k which are not used dont influence the fit
+
+library(robustbase)
+
+library(mlbench)
+#library(help = "mlbench")
+
+data(BostonHousing)
+str(BostonHousing)
+
+summary(BostonHousing)
+head(BostonHousing)
+
+reg1 <- lm(medv ~., data =BostonHousing)
+summary(reg1)
+
+plot(reg1)
+
+library(car)
+outlierTest(reg1) #identify the outlier data pts
+
+library(robustbase)
+ltsFit = ltsReg(medv ~., data =BostonHousing)
+summary(ltsFit)

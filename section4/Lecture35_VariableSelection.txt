@@ -1,0 +1,41 @@
+###########################################
+################ Vaariable importance of regression models
+
+library(relaimpo) #variable importance in OLS models
+#percent contribution of the different predictors
+
+fit1=lm(medv~., data = BostonHousing)
+calc.relimp(fit1, type = c("lmg"), rela = TRUE)
+#R^2 partitioned by averaging over orders, 
+#like in Lindemann, Merenda and Gold 
+
+library(hier.part) #variance partitioning
+
+#determine the amount of Y variance explained by each of the 
+#12 predictors in the data. 
+
+head(BostonHousing)
+ncol(BostonHousing)
+
+x=BostonHousing[,1:12] #predictors
+# will only work for less than 13 predictors
+
+H=hier.part(BostonHousing$medv,x, fam = "gaussian", gof = "Rsqu")
+
+H$I.perc #% independent effects
+
+### variable importance using caret package 
+### can be used with any regression model
+library(caret)
+
+varImp(fit1, scale = FALSE)
+
+#For regression, the relationship between each predictor 
+#and the outcome is evaluated. 
+#An argument, nonpara, is used to pick the model fitting technique.
+#When nonpara = FALSE, a linear model is fit and the absolute value of
+#the t-value for the slope of the predictor is used. 
+#Otherwise, a loess smoother is fit between the outcome and the 
+#predictor. The R2 statistic is calculated for this model 
+#against the intercept only null model. 
+#This number is returned as a relative measure of variable importance.

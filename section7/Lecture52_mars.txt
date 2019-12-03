@@ -1,0 +1,69 @@
+################################################################
+####### Multivariate adaptive regression splines (MARS)
+
+### Non-parametric regression: an extension of linear models 
+#automatically models nonlinearities and interactions between variables
+
+eco=read.csv("biocap.csv")
+head(eco)
+
+## gamboost fitting
+set.seed(123)
+
+Train = createDataPartition(eco$BiocapacityT , p=0.75, list=FALSE)
+#split data in 75%-25% ratio
+
+training = eco[ Train, ] #75% data for training 
+testing = eco[ -Train, ] #25% testing
+
+library(earth)
+
+modfit = earth(BiocapacityT ~ ., data = training)
+
+modfit
+##generalized cross validation (GCV) to compare the performance of 
+#model subsets in order to choose the best subset
+#lower values of GCV are better.
+#form of regularization 
+
+evimp(modfit)
+
+p=predict(modfit, newdata =testing) #testing was the 25% original data not used in model building
+
+head(p)
+
+p=as.data.frame(p)
+
+final=cbind(testing$BiocapacityT,p) #how do predicted values (p) compare with actual test data
+
+head(final)
+
+cor(testing$BiocapacityT,p)
+
+###### do it with caret
+
+fitControl = trainControl(method = 'cv', number=10) #10 fold cv
+
+modfit2=train(BiocapacityT ~ ., data = training, method = "earth",
+              trControl = fitControl)
+
+summary(modfit2)
+
+#MARS starts with a model which consists of just the intercept term 
+#(which is the mean of the response values).
+#MARS then repeatedly adds basis function in pairs to the model. 
+#At each step it finds the pair of basis functions that gives the maximum reduction 
+
+p=predict(modfit2, newdata =testing) #testing was the 25% original data not used in model building
+
+head(p)
+
+p=as.data.frame(p)
+
+final=cbind(testing$BiocapacityT,p) #how do predicted values (p) compare with actual test data
+
+head(final)
+
+cor(testing$BiocapacityT,p)
+
+varImp(modfit2)

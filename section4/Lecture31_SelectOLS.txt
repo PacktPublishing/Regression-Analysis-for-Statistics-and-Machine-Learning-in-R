@@ -1,0 +1,30 @@
+#########################################################################
+######## Select ols model subsets
+
+data(BostonHousing)
+str(BostonHousing)
+
+summary(BostonHousing)
+head(BostonHousing)
+
+fit1=lm(medv~., data = BostonHousing)
+summary(fit1)
+
+fit2=lm(medv~lstat+rm, data = BostonHousing)
+summary(fit2)
+
+library(leaps)
+
+regfit = regsubsets(medv~., data = BostonHousing)
+summary(regfit) #will fit 8 models by default
+
+reg.summary=summary(regfit)
+
+reg.summary$rsq
+#which  model to go for?
+
+## Adjusted R2
+plot(regfit, scale = "adjr2", main = "Adjusted R^2")
+
+# the best OLS regression models includes- Intercept
+# predictors: zn, chas1,nox,rm,dis,pratio, b,lstat

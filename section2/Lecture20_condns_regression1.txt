@@ -1,0 +1,33 @@
+############################################################
+#########################################################
+####### Check the conditions of regression
+
+# testing model assumptions some simulated data
+x <- runif(100, 0, 10)
+y <- 1 + 2 * x + rnorm(100, 0, 1)
+m <- lm(y ~ x)
+par(mfrow = c(2, 2))
+plot(m)
+
+
+fit=lm(Sepal.Length~Petal.Length+Petal.Width,data=iris)
+summary(fit)
+par(mfrow = c(2, 2))
+plot(fit)
+
+library(lmtest)
+# Test for Autocorrelated/non-independence of Errors
+#Ho: There is no auto-correlation bw errors (errors r independent)
+dwtest(fit)
+
+#H0: hypothesis of constant error variance, i.e.  NO heteroscedasticity
+#variance around the regression line is the same for all values of the predictor variable (X)
+library(car)
+ncvTest(fit)
+
+#identify outliers that have too much influence on model
+#influential data points
+cutoff <- 4/((nrow(iris)-length(fit$coefficients)-2)) 
+plot(fit, which=4, cook.levels=cutoff) #influential data points/outliers
+
+

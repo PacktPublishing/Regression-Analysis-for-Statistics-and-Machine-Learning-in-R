@@ -1,0 +1,53 @@
+######### Conditional inference tree- R #######
+######## does away with the need of tree pruning
+
+setwd("F:\\RegressionModelling_R\\Lectures\\section7")
+library(caret)
+
+library(party)
+
+eco=read.csv("biocap.csv")
+
+names(eco)
+
+set.seed(10)
+
+inTraining =createDataPartition(eco$BiocapacityT, p = .75, list = FALSE) #create a 75% data partition
+
+training = eco[ inTraining,] #75% data for model training
+testing= eco[-inTraining,] #25% for model testing
+
+fitc= train(BiocapacityT ~ ., data=training, method='ctree',tuneGrid=expand.grid(mincriterion=0.95))
+
+ctreeVarImp = varImp(fitc) #variable importance
+
+ctreeVarImp
+
+plot(ctreeVarImp)
+##### use party package- visualize the tree 
+
+library(party)
+fit2=ctree(BiocapacityT ~ ., data=training)
+
+plot(fit2, main="Conditional Inference Tree for Biocapacity")
+
+print(fit2)
+
+#######################################################################
+############ how will this generalize?
+
+p=predict(fitc, newdata =testing) #testing was the 25% original data not used in model building
+
+head(p)
+
+p=as.data.frame(p)
+
+final=cbind(testing$BiocapacityT,p) #how do predicted values (p) compare with actual test data
+
+head(final)
+
+cor(testing$BiocapacityT,p)
+
+library(Metrics)
+
+rmse(testing$BiocapacityT,p)

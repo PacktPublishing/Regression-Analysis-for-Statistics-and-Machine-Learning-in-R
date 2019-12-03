@@ -1,0 +1,26 @@
+###########################################################
+###################### Simple linear regression
+
+
+library(help = "datasets")
+
+data("Orange")
+head(Orange)
+
+
+plot(Orange$age,Orange$circumference)
+
+## model the variation in circumfrence as a function of age
+## H0: there is no link between age and circumfrence
+
+fit=lm(circumference~age,data=Orange)
+
+summary(fit)
+
+## p<0.05__> reject H0
+## therefore R2 is significantly different from 0
+
+#### coefficents
+## Ho: the coefficents of slope and intercept are 0 in the population
+## if p<0.05 reject
+## rejecting H0 does not mean null is true

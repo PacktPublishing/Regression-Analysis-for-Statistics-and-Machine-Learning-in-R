@@ -1,0 +1,85 @@
+####################################################################
+###### Evaluate accuracy of the regression models
+
+data(BostonHousing)
+str(BostonHousing)
+
+summary(BostonHousing)
+head(BostonHousing)
+
+library(caret)
+
+### 1) Data split
+
+set.seed(99)
+Train = createDataPartition(BostonHousing$medv, p=0.75, list=FALSE)
+#split data in 75%-25% ratio
+
+training = BostonHousing[ Train, ] #75% data for training 
+testing = BostonHousing[ -Train, ] #25% testing
+
+fit1= train(medv~., data=training, method="lm") #fit OLS in caret
+
+summary(fit1) #see the performance on the training data
+
+fit2= train(medv~., data=training, method="lm",metric="RMSE") #fit OLS in caret
+
+print(fit2) #tells us the rmse error
+
+p1=predict(fit2, newdata=testing) #predict medv on the basis of 25% test
+
+p=as.data.frame(p1)
+test=as.data.frame(testing$medv) #actual medv values. excluded
+y=cbind(test,p)
+colnames(y)=c("medv","Pred")
+
+head(y) #df of the actual medv and predicted medv
+
+#correlation between actual and predicted Y
+cor.test(y$medv,y$Pred) #strong association between the predicted and actual 
+#medv
+
+library(Metrics)
+rmse(y$medv,y$Pred) #root mean square error
+
+## rmse of the training and testing are similar- no overfitting
+
+### 2) K Fold CV
+
+# define training control
+train_control <- trainControl(method="cv", number=10)
+#10 fold cv
+
+fit3= train(medv~., data=BostonHousing,trControl=train_control, method="lm",metric="RMSE") #fit
+# when we cant split the dataset
+summary(fit3)
+print(fit3)
+
+### 3) 10 fold CV and data split
+set.seed(999)
+Train = createDataPartition(BostonHousing$medv, p=0.75, list=FALSE)
+#split data in 75%-25% ratio
+
+training = BostonHousing[ Train, ] #75% data for training 
+testing = BostonHousing[ -Train, ] #25% testing
+
+train_control <- trainControl(method="cv", number=10)
+#10 fold cv
+
+fit4= train(medv~., data=training,trControl=train_control, method="lm") #fit OLS in caret
+print(fit4)
+
+p1=predict(fit4, newdata=testing) #predict on the unseen data
+
+p=as.data.frame(p1)
+test=as.data.frame(testing$medv) #actual medv values. excluded
+y=cbind(test,p)
+colnames(y)=c("medv","Pred")
+
+head(y) #df of the actual medv and predicted medv
+
+cor.test(y$medv,y$Pred) #strong association between the predicted and actual 
+#medv
+
+library(Metrics)
+rmse(y$medv,y$Pred) #root mean square error
